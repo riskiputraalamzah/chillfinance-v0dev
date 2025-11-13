@@ -320,10 +320,14 @@ function renderDashboardTargets() {
 }
 
 function createTargetElement(name, target) {
-  const percentage = Math.min(
-    100,
-    Math.round((target.saldo / target.target) * 100)
-  );
+  // ==========================================================
+  // FIX BUG 2: Tambahkan pengecekan target.target > 0
+  // ==========================================================
+  const percentage =
+    target.target > 0
+      ? Math.min(100, Math.round((target.saldo / target.target) * 100))
+      : 0;
+
   const isCompleted = target.saldo >= target.target;
   const statusClass = isCompleted ? "completed" : "active";
   const statusText = isCompleted ? "✅ Selesai" : "Aktif";
@@ -379,17 +383,32 @@ function populateTargetSelects() {
 
 // format target
 document.getElementById("target-nominal")?.addEventListener("input", (e) => {
+  // ==========================================================
+  // FIX BUG 2 (Tambahan): Pastikan formatRupiah menerima angka
+  // ==========================================================
   const value = e.target.value;
-  document.getElementById("format-target").textContent = value
-    ? formatRupiah(value)
-    : "Rp 0";
+  const numericValue = Number.parseInt(value) || 0;
+  document.getElementById("format-target").textContent =
+    formatRupiah(numericValue);
 });
+
 document.getElementById("add-target-form")?.addEventListener("submit", (e) => {
   e.preventDefault();
   const name = document.getElementById("target-name").value;
-  const nominal = Number.parseInt(
-    document.getElementById("target-nominal").value
-  );
+
+  // ==========================================================
+  // FIX BUG 2: Tambahkan '|| 0' untuk mencegah NaN
+  // ==========================================================
+  const nominal =
+    Number.parseInt(document.getElementById("target-nominal").value) || 0;
+
+  // ==========================================================
+  // FIX BUG 2: Tambahkan validasi agar nominal tidak 0
+  // ==========================================================
+  if (nominal <= 0) {
+    alert("❌ Nominal target harus lebih dari 0.");
+    return;
+  }
 
   if (
     Object.keys(currentUser.targets).some(
@@ -413,6 +432,7 @@ document.getElementById("add-target-form")?.addEventListener("submit", (e) => {
   e.target.reset();
   renderTargets();
   updateDashboard();
+  document.getElementById("format-target").textContent = "Rp 0"; // Reset format
 });
 
 function renderTargets() {
@@ -426,10 +446,14 @@ function renderTargets() {
 
   container.innerHTML = Object.entries(currentUser.targets)
     .map(([name, target]) => {
-      const percentage = Math.min(
-        100,
-        Math.round((target.saldo / target.target) * 100)
-      );
+      // ==========================================================
+      // FIX BUG 2: Tambahkan pengecekan target.target > 0
+      // ==========================================================
+      const percentage =
+        target.target > 0
+          ? Math.min(100, Math.round((target.saldo / target.target) * 100))
+          : 0;
+
       const isCompleted = target.saldo >= target.target;
       const statusClass = isCompleted ? "completed" : "active";
       const statusText = isCompleted ? "✅ Selesai" : "Aktif";
@@ -473,18 +497,34 @@ function deleteTarget(name) {
 
 document.getElementById("nabung-sumber")?.addEventListener("change", (e) => {
   const targetGroup = document.getElementById("target-select-group");
+  // ==========================================================
+  // FIX BUG 1: Dapatkan elemen select target
+  // ==========================================================
+  const targetSelect = document.getElementById("nabung-target");
+
   if (e.target.value === "target") {
     targetGroup.classList.remove("hidden");
+    // ==========================================================
+    // FIX BUG 1: Tambahkan 'required'
+    // ==========================================================
+    targetSelect.required = true;
   } else {
     targetGroup.classList.add("hidden");
+    // ==========================================================
+    // FIX BUG 1: Hapus 'required'
+    // ==========================================================
+    targetSelect.required = false;
   }
 });
 
 document.getElementById("nabung-jumlah")?.addEventListener("input", (e) => {
+  // ==========================================================
+  // FIX BUG 2 (Tambahan): Pastikan formatRupiah menerima angka
+  // ==========================================================
   const value = e.target.value;
-  document.getElementById("format-nabung").textContent = value
-    ? formatRupiah(value)
-    : "Rp 0";
+  const numericValue = Number.parseInt(value) || 0;
+  document.getElementById("format-nabung").textContent =
+    formatRupiah(numericValue);
 });
 
 document.getElementById("nabung-catatan")?.addEventListener("input", (e) => {
@@ -497,10 +537,21 @@ document.getElementById("nabung-catatan")?.addEventListener("input", (e) => {
 document.getElementById("nabung-form")?.addEventListener("submit", (e) => {
   e.preventDefault();
   const sumber = document.getElementById("nabung-sumber").value;
-  const jumlah = Number.parseInt(
-    document.getElementById("nabung-jumlah").value
-  );
+
+  // ==========================================================
+  // FIX BUG 2: Tambahkan '|| 0' untuk mencegah NaN
+  // ==========================================================
+  const jumlah =
+    Number.parseInt(document.getElementById("nabung-jumlah").value) || 0;
   const catatan = document.getElementById("nabung-catatan").value || "-";
+
+  // ==========================================================
+  // FIX BUG 2: Tambahkan validasi agar jumlah tidak 0
+  // ==========================================================
+  if (jumlah <= 0) {
+    alert("❌ Jumlah nabung harus lebih dari 0.");
+    return;
+  }
 
   if (sumber === "utama") {
     currentUser.saldo_utama += jumlah;
@@ -510,7 +561,7 @@ document.getElementById("nabung-form")?.addEventListener("submit", (e) => {
       jumlah,
       catatan,
     ]);
-    alert(`✅ Nabung Rp ${formatRupiah(jumlah)} ke saldo utama berhasil!`);
+    alert(`✅ Nabung ${formatRupiah(jumlah)} ke saldo utama berhasil!`);
   } else {
     const targetName = document.getElementById("nabung-target").value;
     if (!targetName) {
@@ -538,9 +589,7 @@ document.getElementById("nabung-form")?.addEventListener("submit", (e) => {
       alert(`🎉 Target '${targetName}' telah tercapai!`);
     } else {
       alert(
-        `✅ Nabung Rp ${formatRupiah(
-          jumlah
-        )} ke target '${targetName}' berhasil!`
+        `✅ Nabung ${formatRupiah(jumlah)} ke target '${targetName}' berhasil!`
       );
     }
   }
@@ -548,6 +597,10 @@ document.getElementById("nabung-form")?.addEventListener("submit", (e) => {
   StorageManager.updateUser(currentUser.username, currentUser);
   updateDashboard();
   e.target.reset();
+  document.getElementById("format-nabung").textContent = "Rp 0"; // Reset format
+  // Kembalikan state awal form nabung
+  document.getElementById("target-select-group").classList.add("hidden");
+  document.getElementById("nabung-target").required = false;
   switchNavPage("dashboard");
 });
 
@@ -569,10 +622,13 @@ document
 document
   .getElementById("pengeluaran-jumlah")
   ?.addEventListener("input", (e) => {
+    // ==========================================================
+    // FIX BUG 2 (Tambahan): Pastikan formatRupiah menerima angka
+    // ==========================================================
     const value = e.target.value;
-    document.getElementById("format-pengeluaran").textContent = value
-      ? formatRupiah(value)
-      : "Rp 0";
+    const numericValue = Number.parseInt(value) || 0;
+    document.getElementById("format-pengeluaran").textContent =
+      formatRupiah(numericValue);
   });
 
 document
@@ -587,10 +643,20 @@ document
 document.getElementById("pengeluaran-form")?.addEventListener("submit", (e) => {
   e.preventDefault();
   const sumber = document.getElementById("pengeluaran-sumber").value;
-  const jumlah = Number.parseInt(
-    document.getElementById("pengeluaran-jumlah").value
-  );
+  // ==========================================================
+  // FIX BUG 2: Tambahkan '|| 0' untuk mencegah NaN
+  // ==========================================================
+  const jumlah =
+    Number.parseInt(document.getElementById("pengeluaran-jumlah").value) || 0;
   const catatan = document.getElementById("pengeluaran-catatan").value || "-";
+
+  // ==========================================================
+  // FIX BUG 2: Tambahkan validasi agar jumlah tidak 0
+  // ==========================================================
+  if (jumlah <= 0) {
+    alert("❌ Jumlah pengeluaran harus lebih dari 0.");
+    return;
+  }
 
   if (sumber === "utama") {
     if (jumlah > currentUser.saldo_utama) {
@@ -604,9 +670,7 @@ document.getElementById("pengeluaran-form")?.addEventListener("submit", (e) => {
       jumlah,
       catatan,
     ]);
-    alert(
-      `✅ Pengeluaran Rp ${formatRupiah(jumlah)} dari saldo utama dicatat.`
-    );
+    alert(`✅ Pengeluaran ${formatRupiah(jumlah)} dari saldo utama dicatat.`);
   } else {
     const targetName = document.getElementById("pengeluaran-target").value;
     if (!targetName) {
@@ -644,7 +708,7 @@ document.getElementById("pengeluaran-form")?.addEventListener("submit", (e) => {
 
     if (
       !confirm(
-        `⚠️ Penarikan maksimal 30% = Rp ${formatRupiah(maxTarik)}. Lanjutkan?`
+        `⚠️ Penarikan maksimal 30% = ${formatRupiah(maxTarik)}. Lanjutkan?`
       )
     ) {
       return;
@@ -659,7 +723,7 @@ document.getElementById("pengeluaran-form")?.addEventListener("submit", (e) => {
       catatan,
     ]);
     alert(
-      `✅ Penarikan Rp ${formatRupiah(
+      `✅ Penarikan ${formatRupiah(
         maxTarik
       )} dari target '${targetName}' berhasil!`
     );
@@ -668,6 +732,9 @@ document.getElementById("pengeluaran-form")?.addEventListener("submit", (e) => {
   StorageManager.updateUser(currentUser.username, currentUser);
   updateDashboard();
   e.target.reset();
+  document.getElementById("format-pengeluaran").textContent = "Rp 0"; // Reset format
+  // Kembalikan state awal form pengeluaran
+  document.getElementById("pengeluaran-target-group").classList.add("hidden");
   switchNavPage("dashboard");
 });
 
