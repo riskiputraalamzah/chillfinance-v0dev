@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChillFinance - Nabung Gen Z</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Auth Pages -->
+        <div id="auth-container" class="auth-container">
+            <!-- Login Page -->
+            <div id="login-page" class="auth-page active">
+                <div class="auth-header">
+                    <div class="logo">💸</div>
+                    <h1>ChillFinance</h1>
+                    <p>Nabung jadi lebih chill</p>
+                </div>
+                <form id="login-form" class="auth-form">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="login-username" placeholder="Masukkan username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="login-password" placeholder="Masukkan password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Login</button>
+                </form>
+                <p class="auth-toggle">Belum punya akun? <a onclick="switchPage('register-page')">Daftar di sini</a></p>
+            </div>
+
+            <!-- Register Page -->
+            <div id="register-page" class="auth-page">
+                <div class="auth-header">
+                    <div class="logo">💸</div>
+                    <h1>ChillFinance</h1>
+                    <p>Mulai nabung sekarang</p>
+                </div>
+                <form id="register-form" class="auth-form">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="register-username" placeholder="3-32 karakter" required>
+                        <small id="username-error" class="error-text"></small>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="register-password" placeholder="Min 6 karakter" required>
+                        <small id="password-error" class="error-text"></small>
+                    </div>
+                    <div class="form-group">
+                        <label>Konfirmasi Password</label>
+                        <input type="password" id="register-confirm" placeholder="Ulangi password" required>
+                        <small id="confirm-error" class="error-text"></small>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Daftar</button>
+                </form>
+                <p class="auth-toggle">Sudah punya akun? <a onclick="switchPage('login-page')">Login di sini</a></p>
+            </div>
+        </div>
+
+        <!-- Main App -->
+        <div id="main-app" class="main-app hidden">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-content">
+                    <div>
+                        <h2 id="username-display">Hi, User!</h2>
+                        <p class="date-display" id="date-display"></p>
+                    </div>
+                    <button id="logout-btn" class="btn-icon">👤</button>
+                </div>
+            </header>
+
+            <!-- Bottom Navigation -->
+            <nav class="bottom-nav">
+                <button class="nav-btn active" data-page="dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-btn" data-page="nabung">
+                    <span class="nav-icon">💰</span>
+                    <span>Nabung</span>
+                </button>
+                <button class="nav-btn" data-page="pengeluaran">
+                    <span class="nav-icon">🧾</span>
+                    <span>Keluar</span>
+                </button>
+                <button class="nav-btn" data-page="targets">
+                    <span class="nav-icon">🎯</span>
+                    <span>Target</span>
+                </button>
+                <button class="nav-btn" data-page="riwayat">
+                    <span class="nav-icon">📜</span>
+                    <span>Riwayat</span>
+                </button>
+            </nav>
+
+            <!-- Content Container -->
+            <div class="content-container">
+                <!-- Dashboard Page -->
+                <div id="dashboard" class="page active">
+                    <div class="container">
+                        <!-- Main Balance Card -->
+                        <div class="balance-card">
+                            <div class="balance-header">
+                                <h3>Saldo Utama</h3>
+                                <button class="btn-small" onclick="toggleBalanceVisibility()">👁️</button>
+                            </div>
+                            <div class="balance-amount" id="balance-display">Rp 0</div>
+                            <div class="balance-subtext">Total tabungan kamu</div>
+                            <div class="quick-actions">
+                                <button class="quick-btn" onclick="switchNavPage('nabung')">
+                                    <span>➕</span>
+                                    <span>Nabung</span>
+                                </button>
+                                <button class="quick-btn" onclick="switchNavPage('pengeluaran')">
+                                    <span>➖</span>
+                                    <span>Keluar</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Analytics Card -->
+                        <div class="analytics-card">
+                            <h4>Ringkasan Keuangan</h4>
+                            <div class="analytics-grid">
+                                <div class="stat">
+                                    <span class="stat-label">Total Nabung</span>
+                                    <span class="stat-value" id="total-nabung">Rp 0</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Total Keluar</span>
+                                    <span class="stat-value" id="total-keluar">Rp 0</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Rasio</span>
+                                    <span class="stat-value" id="rasio-keluar">0%</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Status</span>
+                                    <span class="stat-value" id="status-keuangan">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Targets Section -->
+                        <div class="targets-section">
+                            <div class="section-header">
+                                <h4>Target Tabungan</h4>
+                                <button class="btn-small" onclick="switchNavPage('targets')">Lihat Semua →</button>
+                            </div>
+                            <div id="dashboard-targets" class="targets-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nabung Page -->
+                <div id="nabung" class="page">
+                    <div class="container">
+                        <h3 class="page-title">💸 Nabung (Uang Masuk)</h3>
+                        <div class="card">
+                            <form id="nabung-form" class="form-section">
+                                <div class="form-group">
+                                    <label>Sumber Saldo</label>
+                                    <select id="nabung-sumber" required>
+                                        <option value="">Pilih sumber...</option>
+                                        <option value="utama">🏦 Saldo Utama</option>
+                                        <option value="target">🎯 Saldo Target</option>
+                                    </select>
+                                </div>
+                                <div class="form-group hidden" id="target-select-group">
+                                    <label>Pilih Target</label>
+                                    <select id="nabung-target" required>
+                                        <option value="">Pilih target...</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Jumlah Uang</label>
+                                    <input type="number" id="nabung-jumlah" placeholder="0" min="1" required>
+                                    <small id="format-nabung" class="format-text">Rp 0</small>
+                                </div>
+                                <div class="form-group">
+                                    <label>Catatan (Opsional)</label>
+                                    <textarea id="nabung-catatan" placeholder="Misal: Uang gajian" maxlength="120"></textarea>
+                                    <small id="catatan-count" class="count-text">0/120</small>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-full">💾 Simpan Nabung</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pengeluaran Page -->
+                <div id="pengeluaran" class="page">
+                    <div class="container">
+                        <h3 class="page-title">🧾 Catat Pengeluaran</h3>
+                        <div class="card">
+                            <form id="pengeluaran-form" class="form-section">
+                                <div class="form-group">
+                                    <label>Sumber Saldo</label>
+                                    <select id="pengeluaran-sumber" required>
+                                        <option value="">Pilih sumber...</option>
+                                        <option value="utama">🏦 Saldo Utama</option>
+                                        <option value="target">🎯 Saldo Target</option>
+                                    </select>
+                                </div>
+                                <div class="form-group hidden" id="pengeluaran-target-group">
+                                    <label>Pilih Target</label>
+                                    <select id="pengeluaran-target" required>
+                                        <option value="">Pilih target...</option>
+                                    </select>
+                                    <small class="warning-text">⚠️ Hanya bisa 1x/tahun (max 30% dari saldo)</small>
+                                </div>
+                                <div class="form-group">
+                                    <label>Jumlah Pengeluaran</label>
+                                    <input type="number" id="pengeluaran-jumlah" placeholder="0" min="1" required>
+                                    <small id="format-pengeluaran" class="format-text">Rp 0</small>
+                                </div>
+                                <div class="form-group">
+                                    <label>Catatan (Opsional)</label>
+                                    <textarea id="pengeluaran-catatan" placeholder="Misal: Belanja makan" maxlength="120"></textarea>
+                                    <small class="count-text">0/120</small>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-full">✓ Catat Pengeluaran</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Targets Page -->
+                <div id="targets" class="page">
+                    <div class="container">
+                        <h3 class="page-title">🎯 Kelola Target</h3>
+                        
+                        <!-- Add Target Form -->
+                        <div class="card mb-4">
+                            <h4>Tambah Target Baru</h4>
+                            <form id="add-target-form" class="form-section">
+                                <div class="form-group">
+                                    <label>Nama Target</label>
+                                    <input type="text" id="target-name" placeholder="Misal: Liburan ke Bali" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nominal Target</label>
+                                    <input type="number" id="target-nominal" placeholder="0" min="1" required>
+                                    <small id="format-target" class="format-text">Rp 0</small>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-full">➕ Buat Target</button>
+                            </form>
+                        </div>
+
+                        <!-- Targets List -->
+                        <div class="card">
+                            <h4>Daftar Target Kamu</h4>
+                            <div id="targets-list" class="targets-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Riwayat Page -->
+                <div id="riwayat" class="page">
+                    <div class="container">
+                        <h3 class="page-title">📜 Riwayat Transaksi</h3>
+                        
+                        <div class="tabs">
+                            <button class="tab-btn active" data-tab="utama-history">Saldo Utama</button>
+                            <button class="tab-btn" data-tab="target-history">Target</button>
+                        </div>
+
+                        <!-- Utama History -->
+                        <div id="utama-history" class="tab-content active">
+                            <div class="card">
+                                <div id="utama-riwayat" class="riwayat-list"></div>
+                            </div>
+                        </div>
+
+                        <!-- Target History -->
+                        <div id="target-history" class="tab-content">
+                            <div class="card">
+                                <div id="target-riwayat-selector" class="target-selector"></div>
+                                <div id="target-riwayat" class="riwayat-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
