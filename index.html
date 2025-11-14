@@ -8,9 +8,7 @@
   </head>
   <body>
     <div id="app">
-      <!-- Auth Pages -->
       <div id="auth-container" class="auth-container">
-        <!-- Login Page -->
         <div id="login-page" class="auth-page active">
           <div class="auth-header">
             <div class="logo">💸</div>
@@ -42,11 +40,10 @@
           </form>
           <p class="auth-toggle">
             Belum punya akun?
-            <a onclick="switchPage('register-page')">Daftar di sini</a>
+            <a onclick="app.ui.switchPage('register-page')">Daftar di sini</a>
           </p>
         </div>
 
-        <!-- Register Page -->
         <div id="register-page" class="auth-page">
           <div class="auth-header">
             <div class="logo">💸</div>
@@ -90,14 +87,12 @@
           </form>
           <p class="auth-toggle">
             Sudah punya akun?
-            <a onclick="switchPage('login-page')">Login di sini</a>
+            <a onclick="app.ui.switchPage('login-page')">Login di sini</a>
           </p>
         </div>
       </div>
 
-      <!-- Main App -->
       <div id="main-app" class="main-app hidden">
-        <!-- Header -->
         <header class="header">
           <div class="header-content">
             <div>
@@ -108,7 +103,6 @@
           </div>
         </header>
 
-        <!-- Bottom Navigation -->
         <nav class="bottom-nav">
           <button class="nav-btn active" data-page="dashboard">
             <span class="nav-icon">📊</span>
@@ -132,29 +126,32 @@
           </button>
         </nav>
 
-        <!-- Content Container -->
         <div class="content-container">
-          <!-- Dashboard Page -->
           <div id="dashboard" class="page active">
             <div class="container">
-              <!-- Main Balance Card -->
               <div class="balance-card">
                 <div class="balance-header">
                   <h3>Saldo Utama</h3>
-                  <button class="btn-small" onclick="toggleBalanceVisibility()">
+                  <button
+                    class="btn-small"
+                    onclick="app.dashboard.toggleBalanceVisibility()"
+                  >
                     👁️
                   </button>
                 </div>
                 <div class="balance-amount" id="balance-display">Rp 0</div>
                 <div class="balance-subtext">Total tabungan kamu</div>
                 <div class="quick-actions">
-                  <button class="quick-btn" onclick="switchNavPage('nabung')">
+                  <button
+                    class="quick-btn"
+                    onclick="app.ui.switchNavPage('nabung')"
+                  >
                     <span>➕</span>
                     <span>Nabung</span>
                   </button>
                   <button
                     class="quick-btn"
-                    onclick="switchNavPage('pengeluaran')"
+                    onclick="app.ui.switchNavPage('pengeluaran')"
                   >
                     <span>➖</span>
                     <span>Keluar</span>
@@ -162,7 +159,6 @@
                 </div>
               </div>
 
-              <!-- Analytics Card -->
               <div class="analytics-card">
                 <h4>Ringkasan Keuangan</h4>
                 <div class="analytics-grid">
@@ -185,11 +181,13 @@
                 </div>
               </div>
 
-              <!-- Targets Section -->
               <div class="targets-section">
                 <div class="section-header">
                   <h4>Target Tabungan</h4>
-                  <button class="btn-small" onclick="switchNavPage('targets')">
+                  <button
+                    class="btn-small"
+                    onclick="app.ui.switchNavPage('targets')"
+                  >
                     Lihat Semua →
                   </button>
                 </div>
@@ -198,7 +196,6 @@
             </div>
           </div>
 
-          <!-- Nabung Page -->
           <div id="nabung" class="page">
             <div class="container">
               <h3 class="page-title">💸 Nabung (Uang Masuk)</h3>
@@ -246,7 +243,6 @@
             </div>
           </div>
 
-          <!-- Pengeluaran Page -->
           <div id="pengeluaran" class="page">
             <div class="container">
               <h3 class="page-title">🧾 Catat Pengeluaran</h3>
@@ -299,12 +295,10 @@
             </div>
           </div>
 
-          <!-- Targets Page -->
           <div id="targets" class="page">
             <div class="container">
               <h3 class="page-title">🎯 Kelola Target</h3>
 
-              <!-- Add Target Form -->
               <div class="card mb-4">
                 <h4>Tambah Target Baru</h4>
                 <form id="add-target-form" class="form-section">
@@ -334,7 +328,6 @@
                 </form>
               </div>
 
-              <!-- Targets List -->
               <div class="card">
                 <h4>Daftar Target Kamu</h4>
                 <div id="targets-list" class="targets-list"></div>
@@ -342,7 +335,6 @@
             </div>
           </div>
 
-          <!-- Riwayat Page -->
           <div id="riwayat" class="page">
             <div class="container">
               <h3 class="page-title">📜 Riwayat Transaksi</h3>
@@ -356,14 +348,12 @@
                 </button>
               </div>
 
-              <!-- Utama History -->
               <div id="utama-history" class="tab-content active">
                 <div class="card">
                   <div id="utama-riwayat" class="riwayat-list"></div>
                 </div>
               </div>
 
-              <!-- Target History -->
               <div id="target-history" class="tab-content">
                 <div class="card">
                   <div
@@ -379,6 +369,6 @@
       </div>
     </div>
 
-    <script src="app.js"></script>
+    <script type="module" src="js/main.js"></script>
   </body>
 </html>
